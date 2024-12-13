@@ -1,4 +1,4 @@
-import { typeofEq } from "./minify.js";
+import { typeofEq } from "@src/utils/minify.js";
 
 export type UnionToIntersection<U> =
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>

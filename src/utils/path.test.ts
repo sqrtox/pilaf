@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { v } from "@src/index.js";
+import { access } from "@src/index.js";
 
 describe("path", () => {
   test("access", () => {
@@ -11,8 +11,8 @@ describe("path", () => {
       },
     };
 
-    expect(v.access(target, [])).toBe(target);
-    expect(v.access(target, ["a", "b", "c"])).toBe(1);
-    expect(() => v.access(target, ["a", "b", "c", "d", "e"])).toThrow();
+    expect(access(target, [])).toBe(target);
+    expect(access(target, ["a", "b", "c"])).toBe(1);
+    expect(() => access(target, ["a", "b", "c", "d", "e"])).toThrow();
   });
 });

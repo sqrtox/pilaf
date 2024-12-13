@@ -1,5 +1,16 @@
 import { describe, expect, test } from "bun:test";
-import { tuple, v } from "@src/index.js";
+import {
+  $arr,
+  $arrLike,
+  $every,
+  $num,
+  $obj,
+  $range,
+  $str,
+  $tuple,
+  $val,
+  ValidatorErrorKind,
+} from "@src/index.js";
 import { validatorError_ } from "@src/utils/minify.js";
 import { testErrors } from "@src/utils/test.js";
 
@@ -10,9 +21,9 @@ function toArguments(..._args: unknown[]) {
 }
 
 describe("object", () => {
-  test("arrLike", () => {
-    const U8 = v.and(v.num, v.range(0, 255));
-    const Bytes = v.arrLike(U8);
+  test("$arrLike", () => {
+    const U8 = $every($num, $range(0, 255));
+    const Bytes = $arrLike(U8);
 
     // IArguments [red, green, blue, alpha]
     const pixel = toArguments(255, 0, 0, 255);
@@ -28,7 +39,7 @@ describe("object", () => {
 
       expect(Bytes(invalidPixel, errors)).toBe(false);
       expect(errors).toContainAllValues([
-        validatorError_(v.ValidatorErrorKind.InvalidProperty, [3]),
+        validatorError_(ValidatorErrorKind.InvalidProperty, [3]),
       ]);
     });
 
@@ -48,9 +59,9 @@ describe("object", () => {
     });
   });
 
-  test("arr", () => {
-    const U8 = v.and(v.num, v.range(0, 255));
-    const Bytes = v.arr(U8);
+  test("$arr", () => {
+    const U8 = $every($num, $range(0, 255));
+    const Bytes = $arr(U8);
 
     expect(Bytes([255, 0, 0, 255])).toBe(true);
 
@@ -67,32 +78,32 @@ describe("object", () => {
     });
   });
 
-  test("tuple", () => {
-    const U8 = v.and(v.num, v.range(0, 255));
-    const Rgb = v.tuple(U8, U8, U8);
+  test("$tuple", () => {
+    const U8 = $every($num, $range(0, 255));
+    const Rgb = $tuple(U8, U8, U8);
 
     expect(Rgb([255, 0, 0])).toBe(true);
 
     testErrors((errors) => {
       expect(Rgb([255, 0, "0"], errors)).toBe(false);
       expect(errors).toContainAllValues([
-        validatorError_(v.ValidatorErrorKind.InvalidProperty, [2]),
+        validatorError_(ValidatorErrorKind.InvalidProperty, [2]),
       ]);
     });
 
     testErrors((errors) => {
       expect(Rgb([], errors)).toBe(false);
       expect(errors).toContainAllValues([
-        validatorError_(v.ValidatorErrorKind.InvalidProperty, [0]),
-        validatorError_(v.ValidatorErrorKind.InvalidProperty, [1]),
-        validatorError_(v.ValidatorErrorKind.InvalidProperty, [2]),
+        validatorError_(ValidatorErrorKind.InvalidProperty, [0]),
+        validatorError_(ValidatorErrorKind.InvalidProperty, [1]),
+        validatorError_(ValidatorErrorKind.InvalidProperty, [2]),
       ]);
     });
 
     testErrors((errors) => {
       expect(Rgb([255, 0, 0, 255], errors)).toBe(false);
       expect(errors).toContainAllValues([
-        validatorError_(v.ValidatorErrorKind.UnknownProperty, [3]),
+        validatorError_(ValidatorErrorKind.UnknownProperty, [3]),
       ]);
     });
 
@@ -102,10 +113,10 @@ describe("object", () => {
     });
   });
 
-  test("obj", () => {
-    const Human = v.obj({
-      name: v.str,
-      age: v.num,
+  test("$obj", () => {
+    const Human = $obj({
+      name: $str,
+      age: $num,
     });
 
     expect(Human({ name: "Taro", age: 24 })).toBe(true);
@@ -114,7 +125,7 @@ describe("object", () => {
     testErrors((errors) => {
       expect(Human({ name: "Taro" }, errors)).toBe(false);
       expect(errors).toContainAllValues([
-        validatorError_(v.ValidatorErrorKind.InvalidProperty, ["age"]),
+        validatorError_(ValidatorErrorKind.InvalidProperty, ["age"]),
       ]);
     });
 
@@ -126,13 +137,13 @@ describe("object", () => {
     testErrors((errors) => {
       expect(Human({}, errors)).toBe(false);
       expect(errors).toContainAllValues([
-        validatorError_(v.ValidatorErrorKind.InvalidProperty, ["name"]),
-        validatorError_(v.ValidatorErrorKind.InvalidProperty, ["age"]),
+        validatorError_(ValidatorErrorKind.InvalidProperty, ["name"]),
+        validatorError_(ValidatorErrorKind.InvalidProperty, ["age"]),
       ]);
     });
 
-    const ExampleUrl = v.obj({
-      hostname: v.val("example.com"),
+    const ExampleUrl = $obj({
+      hostname: $val("example.com"),
     });
 
     expect(ExampleUrl(new URL("https://example.com"))).toBe(true);
@@ -142,16 +153,16 @@ describe("object", () => {
         false,
       );
       expect(errors).toContainAllValues([
-        validatorError_(v.ValidatorErrorKind.InvalidProperty, ["hostname"]),
+        validatorError_(ValidatorErrorKind.InvalidProperty, ["hostname"]),
       ]);
     });
   });
 
-  test("strict obj", () => {
-    const Human = v.obj(
+  test("strict $obj", () => {
+    const Human = $obj(
       {
-        name: v.str,
-        age: v.num,
+        name: $str,
+        age: $num,
       },
       true,
     );
@@ -163,35 +174,29 @@ describe("object", () => {
         false,
       );
       expect(errors).toContainAllValues([
-        {
-          kind: v.ValidatorErrorKind.UnknownProperty,
-          path: ["profile"],
-        },
+        validatorError_(ValidatorErrorKind.UnknownProperty, ["profile"]),
       ]);
     });
 
     testErrors((errors) => {
       expect(Human({ name: "Taro" }, errors)).toBe(false);
       expect(errors).toContainAllValues([
-        {
-          kind: v.ValidatorErrorKind.InvalidProperty,
-          path: ["age"],
-        },
+        validatorError_(ValidatorErrorKind.InvalidProperty, ["age"]),
       ]);
     });
   });
 
   test("object validator properties", () => {
     const fields = {
-      name: v.str,
-      age: v.num,
+      name: $str,
+      age: $num,
     };
-    const Human = v.obj(fields);
+    const Human = $obj(fields);
 
     expect(Human.fields).toBe(fields);
     expect(Human.strict).toBe(false);
 
-    const StrictHuman = v.obj(fields, true);
+    const StrictHuman = $obj(fields, true);
 
     expect(StrictHuman.strict).toBe(true);
   });

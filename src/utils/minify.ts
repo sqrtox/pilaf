@@ -3,7 +3,7 @@
  */
 
 import type { ValidatorError, ValidatorErrorKind } from "@src/types.js";
-import type { Path } from "./path.js";
+import type { Path } from "@src/utils/path.js";
 
 export const string_ = "string";
 export const number_ = "number";

@@ -5,7 +5,6 @@ import type {
   ObjectValidator,
   Validator,
   ValidatorMap,
-  Validators,
 } from "@src/types/validator.js";
 import {
   Array_,
@@ -16,7 +15,7 @@ import {
 } from "@src/utils/minify.js";
 import { isArrayLike } from "@src/utils/types.js";
 
-export const arrLike = <V extends Validator>(
+export const $arrLike = <V extends Validator>(
   item: V,
 ): Validator<ArrayLike<Infer<V>[]>> =>
   ((input, errors = [], path = []) => {
@@ -39,18 +38,18 @@ export const arrLike = <V extends Validator>(
     }
 
     return valid;
-  }) as ReturnType<typeof arrLike<V>>;
+  }) as ReturnType<typeof $arrLike<V>>;
 
-export const arr = <V extends Validator>(item: V): Validator<Infer<V>[]> => {
-  const validator = arrLike(item);
+export const $arr = <V extends Validator>(item: V): Validator<Infer<V>[]> => {
+  const validator = $arrLike(item);
 
   return ((input, ...rest) =>
     Array_.isArray(input) && validator(input, ...rest)) as ReturnType<
-    typeof arr<V>
+    typeof $arr<V>
   >;
 };
 
-export const obj = <VM extends ValidatorMap>(
+export const $obj = <VM extends ValidatorMap>(
   fields: VM,
   strict = false,
 ): ObjectValidator<VM> => {
@@ -94,7 +93,7 @@ export const obj = <VM extends ValidatorMap>(
     }
 
     return valid;
-  }) as ReturnType<typeof obj<VM>>;
+  }) as ReturnType<typeof $obj<VM>>;
 
   Object_.assign(validator, {
     fields,
@@ -104,7 +103,7 @@ export const obj = <VM extends ValidatorMap>(
   return validator;
 };
 
-export const tuple = <Vs extends LooseValidators>(
+export const $tuple = <Vs extends LooseValidators>(
   ...values: Vs
 ): Validator<InferValidators<Vs>> =>
   ((input, errors = [], path = []) => {
@@ -141,4 +140,4 @@ export const tuple = <Vs extends LooseValidators>(
     }
 
     return valid;
-  }) as ReturnType<typeof tuple<Vs>>;
+  }) as ReturnType<typeof $tuple<Vs>>;
