@@ -1,0 +1,45 @@
+{
+  "name": "pilaf",
+  "version": "1.0.0",
+  "author": "sqrtox",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sqrtox/pilaf.git"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@types/bun": "^1.1.14",
+    "npm-run-all2": "^7.0.1",
+    "rimraf": "^6.0.1",
+    "tsc-alias": "^1.8.10",
+    "typescript": "^5.7.2"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "bugs": {
+    "url": "https://github.com/sqrtox/pilaf/issues"
+  },
+  "description": "Lightweight validation library.",
+  "files": ["dist", "src", "package.json"],
+  "homepage": "https://github.com/sqrtox/pilaf#readme",
+  "keywords": ["typescript", "schema", "validation"],
+  "license": "MIT",
+  "scripts": {
+    "build": "run-s build:test build:clean build:tsc build:tsc-alias",
+    "build:clean": "rimraf dist",
+    "build:test": "bun run test",
+    "build:tsc": "tsc -p tsconfig.build.json --noCheck",
+    "build:tsc-alias": "tsc-alias -p tsconfig.build.json",
+    "prepare": "bun run build",
+    "test": "bun test --coverage"
+  },
+  "trustedDependencies": ["@biomejs/biome"],
+  "type": "module",
+  "types": "./dist/index.d.ts"
+}
