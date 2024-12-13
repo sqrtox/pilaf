@@ -5,7 +5,9 @@ import {
   boolean_,
   number_,
   string_,
+  symbol_,
   typeofEq,
+  undefined_,
 } from "@src/utils/minify.js";
 import type { Brand } from "@src/utils/types.js";
 
@@ -35,3 +37,11 @@ export const bigint: Validator<bigint> = ((value) =>
 
 export const bool: Validator<boolean> = ((value) =>
   typeofEq(value, boolean_)) as typeof bool;
+
+export const sym: Validator<symbol> = ((value: unknown) =>
+  typeofEq(value, symbol_)) as typeof sym;
+
+export const nul: Validator<null> = ((value) => value === null) as typeof nul;
+
+export const undef: Validator<undefined> = ((value) =>
+  typeofEq(value, undefined_)) as typeof undef;

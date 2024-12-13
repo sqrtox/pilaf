@@ -87,4 +87,32 @@ describe("value", () => {
     expect(Flag(0)).toBe(false);
     expect(Flag("")).toBe(false);
   });
+
+  test("sym", () => {
+    const AnySymbol = v.sym;
+
+    expect(AnySymbol(Symbol())).toBe(true);
+    expect(AnySymbol("")).toBe(false);
+  });
+
+  test("nul", () => {
+    const Nul = v.nul;
+
+    expect(Nul(null)).toBe(true);
+    expect(Nul(undefined)).toBe(false);
+    expect(Nul("")).toBe(false);
+    expect(Nul({})).toBe(false);
+  });
+
+  test("undef", () => {
+    const Undef = v.undef;
+
+    expect(Undef(undefined)).toBe(true);
+    expect(Undef(null)).toBe(false);
+    expect(Undef("")).toBe(false);
+    expect(Undef({})).toBe(false);
+
+    // NOTE: document.all should pass the test
+    // expect(Undef(document.all)).toBe(true);
+  });
 });
