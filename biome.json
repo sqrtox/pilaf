@@ -18,6 +18,9 @@
   "linter": {
     "enabled": true,
     "rules": {
+      "correctness": {
+        "noUnusedVariables": "error"
+      },
       "recommended": true,
       "style": {
         "useBlockStatements": "error"
