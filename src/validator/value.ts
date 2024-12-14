@@ -25,8 +25,6 @@ export const $enum = <const T extends [any, ...any[]]>(
     }),
   );
 
-const Method = $enum("GET", "POST", 1);
-
 export const $any: Validator = (() => true) as unknown as typeof $any;
 
 export const $brand = <const T extends string, U>(
